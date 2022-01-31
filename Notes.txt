@@ -9,8 +9,6 @@ const item = thingsArray.map((element, key) =>{
 
 
 
-
-
 challenge 2:
 function addElement(){
     thingsArray.push(`Things ${thingsArray.length + 1}`);
@@ -18,8 +16,6 @@ function addElement(){
 }
 
 <button onClick={addElement}>
-
-
 
 
 
@@ -50,10 +46,7 @@ const {memeImage, setMemeImage} = useState(memeImage: "");
 
 
 
-
-
-
-const [counter, setCounter] = useState(counter = 0);
+const [counter, setCounter] = useState(0);
 function countUp(){
     setCounter(counter + 1);
 }
@@ -98,7 +91,7 @@ setThingsArray((prevState)=>{
 
 
 
-const [thingsArray, setThingsArray] = useState(thingsArray = ["Thing 1", Thing 2"])
+const [thingsArray, setThingsArray] = useState(["Thing 1", Thing 2"])
 
 setThingsArray((prevState) => {
     return [...prevState, `Thing ${prevState.length+1}`];
@@ -124,8 +117,6 @@ setContact((prevState)=>{
         isFavorite: !prevState.isFavorite
     }
 })
-
-
 
 
 
@@ -157,16 +148,48 @@ function toggleFavorite(){
 
 
 
-
-
 Component App
 import Box
 
 const [boxesArray, setBoxesArray] = useState(boxes)
 
+function toggle(id){
+    setBoxesArray(prevState =>{
+        const newSquares = []
+        for(let i = 0; i<prevState.length; i++){
+            const currentSquare = prevState[i];
+            if(currentSquare.id === id){
+                const updatedSquare = {
+                    ...currentSquare,
+                    on: !currentSquare.on
+                }
+                newSquares.push(updatedSquare);
+
+                //also can be written:
+                newSquares.push({
+                    ...currentSquare,
+                    on: !currentSquare.on
+                });
+            }
+            else{
+                newSquares.push(currentSquare);
+            }
+        }
+        return newSquares;
+    })
+}
+
+function toggle(id){
+    setBoxesArray(prevState =>{
+        return prevState.map((element)=>{
+            return element.id === id ? {...element, on: !element.on} : element;
+        })
+    })
+}
+
 
 const display = boxesArray.map((element, key) =>{
-    return <Box key={key} on={element.on}/>
+    return <Box key={key} on={element.on} handleClick={()=>toggle(element.id)} />
 })
 
 return(
@@ -175,7 +198,7 @@ return(
 
 
 
-
+import {useState}
 Component Box(props)
 
 const styles = {
@@ -183,7 +206,7 @@ const styles = {
 }
 
 return(
-    <div style={styles} className="box"><div>
+    <div onClick={props.handleOnClick} style={styles} className="box"><div>
 )
 
 App css
@@ -193,4 +216,154 @@ App css
     height: 100px;
     border: 1px solid black;
     background-color: transparent;
+}
+
+onClick={()=>props.handleOnClick(props.id)} //the way to pass on the parameter
+
+
+
+
+Conditional Rendering:
+Component Joke(props){
+    const [isShown, setIsShown] = useState(false)
+
+    function toggle(){
+        setIsShown(prevState => !prevState)
+    }
+
+    return(
+        {isShown && <p>props.punchline</p>}
+        <button onClick={toggle}>{isShown ? "Hide" : "Show"} Punchline</button>
+    )
+}
+
+
+
+const [messages, setMessages] = useState(['a','b']);
+
+return(
+    {
+        messages.length > 0 ? 
+        <h1>You have {messages.length} unread {messages.length > 1 ? "messages" : "message"}</h1> :
+        <h1>You're all caught up!</h1>}
+)
+
+
+
+Form:
+
+const [formData, setFormData] = useState(
+    {
+        firstName: "", 
+        lastName: "", 
+        email: "", 
+        comments: "", 
+        isAlive: true,
+        employment: "",
+        favColor: ""
+    })
+
+function handleChange(event){
+    const {name, value, type, checked} = event.target
+    setFormData(prevState =>{
+        return{
+            ...prevState,
+            [name]: type === "checkbox" ? checked : value
+        }
+    })
+}
+
+function handleSubmit(event){
+    event.preventDefault()
+    submitToApi(formData)
+}
+
+return(
+    <form onSubmit={handleSubmit}>
+
+        <input type="text" placeholder="First Name" onChange={handleChange}
+            name="firstName" value={formData.firstName}/>
+        
+        <input type="text" placeholder="Last Name" onChange={handleChange}
+            name="lastName" value={formData.lastName}/>
+        
+        <input type="email" placeholder="Email" onChange={handleChange}
+        name="email" value={formData.email}/>
+        
+        <textarea name="comments" onChange={handleChange} value={formData.comments} />
+
+        <label htmlFor="isAlive">Are you alive?</label>
+        <input type="checkbox" id="isAlive" name="isAlive" checked={formData.isAlive} 
+        onChange={handleChange}/>
+
+        <input type="radio" id="Part-Time"  name="employment" value="Part-Time"
+            checked={formData.employment === "Part-Time"} onChange={handleChange}/>
+        <label htmlFor="Part-Time">Part-Time</label>
+
+        <input type="radio" id="Full-Time"  name="employment" value="Full-Time" 
+            checked={formData.employment === "Full-Time"} onChange={handleChange}/>
+        <label htmlFor="Full-Time">Full-Time</label>
+
+        <label htmlFor="favColor">Favorite Color?</label>
+        <select id="favColor" value={formData.favColor} onChange={handleChange} 
+                name="favColor">
+            <option value="">-- Choose --</option>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+        </select>
+
+        <button>Submit</button>
+
+    </form>
+)
+
+
+
+SignUp(){
+    const [formData, setFormData] = useState(
+        {
+            email: "",
+            password: "",
+            confirm: "",
+            newsletter: false
+        }
+    )
+
+    function handleChange(event){
+        const {name, value, type, checked} = event.target
+        return setFormData(prevState => ({
+            ..prevState,
+            [name]: type === "checkbox" ? checked : value;
+        }))
+    }
+
+    function handleSubmit(event){
+        event.preventDefault()
+        
+        if(formData.confirm === formData.confirm){
+            console.log("Successfully signed up");
+        }else{
+            console.log("passwords do not match");
+            return;
+        }
+
+        formData.newsletter && console.log("Thanks for signing up for our newsletter");
+    }
+
+    return(
+        <form onSubmit={handleSubmit} >
+
+            <input type="email" placeholder="Email" name="email" value={formData.email} /> 
+
+            <input type="password" placeholder="Password" name="password" value={formData.password} onChange={handleChange}/>
+
+            <input type="password" placeholder="Confirm Password" name="password" value={formData.confirm} onChange={handleChange} />
+
+            <label htmlFor="newsletter">I want to join the newsletter</label>
+            <input type="checkbox" id="newsletter" name="newsletter" checked={formData.newsletter} onChange={handleChange}/>
+
+            <button>Sign Up</button>
+
+        </form>
+    )
 }
