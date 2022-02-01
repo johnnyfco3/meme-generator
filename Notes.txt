@@ -367,3 +367,70 @@ SignUp(){
         </form>
     )
 }
+
+
+
+
+API 
+//GET the data (fetch)
+//Save the data to state
+
+App(){
+    const [theData, setData] = useState({});
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        fetch(`https://swapi.dev/api/people/${count}`)
+            .then(res => res.json())
+            .then(data => setData(data))
+    }, [count])
+
+    return (
+        <>
+            <pre>{JSON.stringify(theData, null, 2)}</pre>
+
+        </>
+    )
+}
+
+
+
+
+
+App(){
+    const [show, setShow] = useState(true)
+
+    function toggle(){
+        setShow(prevState => !prevState)
+    }
+
+    return(
+        <div>
+            <button onClick={toggle}> Toggle WindowTracker </button>
+            {show && <WindowTracker />}
+        </div>
+    )
+}
+
+WindowTracker(){
+
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+
+    useEffect(()=>{
+        function watchWidth(){
+            setWindowWidth(window.innerWidth)
+        }
+
+        window.addEventListener("resize", watchWidth)
+
+        return ()=>{
+            window.removeEventListener("resize", watchWidth)
+        }
+    }, [])
+    
+    return(
+        <div>
+            <h1>Window width: {windowWidth}</h1>
+        </div>
+    )
+}

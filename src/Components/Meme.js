@@ -1,8 +1,8 @@
-import {React, useState} from "react";
+import {React, useEffect, useState} from "react";
 import { FaImage } from 'react-icons/fa';
-import memesData from "../memesData";
 
 export function Meme(){
+
     const [meme, setMeme] = useState(
         {
             topText: "", 
@@ -11,12 +11,27 @@ export function Meme(){
         }
     );
 
-    const [allMemeImages, setAllMemeImages] = useState(memesData);
+    const [allMemes, setAllMemes] = useState({});
+
+    useEffect(() =>{
+        async function getMemes(){
+            const res = await fetch("https://api.imgflip.com/get_memes")
+            const data = await res.json()
+            setAllMemes(data.data.memes)
+        }
+        getMemes()
+        
+        /*fetch("https://api.imgflip.com/get_memes")
+            .then(res => res.json())
+            .then(data => setAllMemes(data.data.memes))
+        */
+    }, [])
+
     function getImage(){
         setMeme((prevState) =>{
             return {
                 ...prevState,
-                randomImage: allMemeImages[Math.floor(Math.random()*allMemeImages.length)].url
+                randomImage: allMemes[Math.floor(Math.random()*allMemes.length)].url
             }
         })
     }
